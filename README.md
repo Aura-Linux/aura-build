@@ -1,6 +1,8 @@
 # aura-build
 ![Aura Logo](https://dolphinbox.net/aura/aura-logo-white.png)
 
+![Aura Screenshot](https://i.imgur.com/HMUPy7s.png)
+
 [https://dolphinbox.net/aura](https://dolphinbox.net/aura)
 
 The main build system for Aura. This is where the OS comes together!
