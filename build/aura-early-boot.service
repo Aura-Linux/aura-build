@@ -1,0 +1,12 @@
+[Unit]
+Description=Early Boot Services for Aura
+Before=basic.target
+After=local-fs.target sysinit.target
+DefaultDependencies=no
+
+[Service]
+Type=simple
+ExecStart=/opt/bigbang/aura-early-boot.sh
+
+[Install]
+WantedBy=basic.target

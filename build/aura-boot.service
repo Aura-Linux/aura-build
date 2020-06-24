@@ -1,0 +1,10 @@
+[Unit]
+Description=Starts Aura (including first boot scripts)
+User=root
+
+[Service]
+Type=forking
+ExecStart=/opt/bigbang/aura-boot.sh
+
+[Install]
+WantedBy=multi-user.target
