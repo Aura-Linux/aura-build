@@ -37,10 +37,10 @@ ls -l $DEBIAN_ROOT
 
 echo "*Aura*  -> Stage 2 (Settings)"
 echo "aura" > $DEBIAN_ROOT/etc/hostname
-echo "127.0.0.1 localhost" > $DEBIAN_ROOT/etc/hosts
-echo "127.0.0.1 aura" > $DEBIAN_ROOT/etc/hosts
+echo "127.0.0.1 localhost" >> $DEBIAN_ROOT/etc/hosts
+echo "127.0.0.1 aura" >> $DEBIAN_ROOT/etc/hosts
 sed -i '/root/d' $DEBIAN_ROOT/etc/passwd
-echo "root::0:0:root:/root:/bin/bash" > $DEBIAN_ROOT/etc/passwd
+echo "root::0:0:root:/root:/bin/bash" >> $DEBIAN_ROOT/etc/passwd
 
 mv $DEBIAN_ROOT/boot/vmlinuz* $DEBIAN_ROOT/boot/vmlinuz
 mv $DEBIAN_ROOT/boot/initrd.img* $DEBIAN_ROOT/boot/initrd.img
@@ -71,10 +71,10 @@ ln -s $DEBIAN_ROOT/etc/systemd/system/aura-early-boot.service $DEBIAN_ROOT/etc/s
 echo "/dev/sda1 / ext2 defaults 0 1" > $DEBIAN_ROOT/etc/fstab
 
 # Add a build log
-echo "Aura built on: " > $DEBIAN_ROOT/aura-build-info
-date > $DEBIAN_ROOT/aura-build-info
-echo "The build server was: " > $DEBIAN_ROOT/aura-build-info
-uname -a > $DEBIAN_ROOT/aura-build-info
+echo "Aura built on: " >> $DEBIAN_ROOT/aura-build-info
+date >> $DEBIAN_ROOT/aura-build-info
+echo "The build server was: " >> $DEBIAN_ROOT/aura-build-info
+uname -a >> $DEBIAN_ROOT/aura-build-info
 
 echo "*Aura*  -> Stage 3 (Image)"
 virt-make-fs \
