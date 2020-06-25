@@ -1,2 +1,2 @@
 /opt/bigbang/BasiliskII
-#exec sudo poweroff
+exec sudo poweroff
