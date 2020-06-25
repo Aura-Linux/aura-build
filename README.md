@@ -24,3 +24,7 @@ root partition on first boot.
 * ``aura-early-boot.service`` (and it's related ``.sh`` file) is run earlier in the boot process (by basic.target), and 
 currently displays an image file on the framebuffer.
 * ``basilisk_ii_prefs`` is the Basilisk II configuration file.
+
+## Legal
+Aura is provided  **for educational purposes only** as a way to preserve the history of the classic Macintosh software. System 7 can be considered as "abandonware", as it is no longer sold, and the last update was over 23 years ago.
+The Macintosh System Software and ROMs are the property of Apple Inc.
