@@ -5,6 +5,7 @@ export BUILD_DIR=/opt/bigbang/build
 export RESULT_DIR=/opt/bigbang/result
 export DEBIAN_ROOT=/opt/bigbang/debian_root
 export IMAGE_FILE=$RESULT_DIR/aura.img
+#export LIBGUESTFS_DEBUG=1 LIBGUESTFS_TRACE=1
 
 echo "*Aura*  Starting Aura build..."
 cd $BUILD_DIR || exit
@@ -15,7 +16,7 @@ echo "*Aura* Starting Basilisk II build..."
 git clone https://github.com/kanjitalk755/macemu.git
 cd $BUILD_DIR/macemu/BasiliskII/src/Unix
 NO_CONFIGURE=1 ./autogen.sh
-./configure --enable-jit-compiler
+./configure --enable-jit-compiler --build i686-pc-linux-gnu --host i686-pc-linux-gnu
 make -j
 cp BasiliskII $RESULT_DIR
 cd $BUILD_DIR
@@ -24,7 +25,8 @@ echo "*Aura* Starting OS Build..."
 echo "*Aura*   -> Stage 1 (Debootstrap)"
 mkdir $DEBIAN_ROOT
 debootstrap \
-  --include linux-image-amd64,xorg,sudo,libsdl2-2.0-0,cloud-utils,telnetd,fim \
+  --include linux-image-686-pae,xorg,sudo,libsdl2-2.0-0,cloud-utils,telnetd,fim \
+  --arch i386 \
   stretch \
   "$DEBIAN_ROOT" \
   http://deb.debian.org/debian/
@@ -67,6 +69,12 @@ mkdir $DEBIAN_ROOT/etc/systemd/system/basic.target.wants/
 ln -s $DEBIAN_ROOT/etc/systemd/system/aura-early-boot.service $DEBIAN_ROOT/etc/systemd/system/basic.target.wants/aura-early-boot.service
 
 echo "/dev/sda1 / ext2 defaults 0 1" > $DEBIAN_ROOT/etc/fstab
+
+# Add a build log
+echo "Aura built on: " > $DEBIAN_ROOT/aura-build-info
+date > $DEBIAN_ROOT/aura-build-info
+echo "The build server was: " > $DEBIAN_ROOT/aura-build-info
+uname -a > $DEBIAN_ROOT/aura-build-info
 
 echo "*Aura*  -> Stage 3 (Image)"
 virt-make-fs \

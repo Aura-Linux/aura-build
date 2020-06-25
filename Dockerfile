@@ -1,4 +1,4 @@
-FROM debian:buster
+FROM i386/debian:stretch
 WORKDIR /opt/bigbang/build
 
 RUN apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install  -y \
@@ -8,7 +8,8 @@ RUN apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install  -y \
   libsdl2-dev \
   debootstrap \
   libguestfs-tools \
-  syslinux
+  syslinux \
+  linux-image-686-pae
 
 COPY build/ .
 

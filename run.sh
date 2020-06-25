@@ -7,6 +7,7 @@ echo "*Aura* Starting build container..."
 docker run \
 --name aura-build \
 --mount type=bind,source="$(pwd)"/result,target=/opt/bigbang/result \
+--privileged \
 aura/build
 echo "*Aura* Removing containers..."
 docker rm aura-build
