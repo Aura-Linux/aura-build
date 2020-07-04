@@ -16,17 +16,20 @@ echo "*Aura* Starting Basilisk II build..."
 git clone https://github.com/kanjitalk755/macemu.git
 cd $BUILD_DIR/macemu/BasiliskII/src/Unix
 NO_CONFIGURE=1 ./autogen.sh
-./configure --enable-jit-compiler --build i686-pc-linux-gnu --host i686-pc-linux-gnu
+./configure --enable-jit-compiler
 make -j
 cp BasiliskII $RESULT_DIR
 cd $BUILD_DIR
+
+echo "*Aura* Getting Aura UI..."
+git clone https://github.com/Aura-Linux/aura-ui.git
 
 echo "*Aura* Starting OS Build..."
 echo "*Aura*   -> Stage 1 (Debootstrap)"
 mkdir $DEBIAN_ROOT
 debootstrap \
-  --include linux-image-686-pae,xorg,sudo,libsdl2-2.0-0,cloud-utils,telnetd,fim \
-  --arch i386 \
+  --include linux-image-rt-amd64,xorg,sudo,libsdl2-2.0-0,cloud-utils,telnetd,fim,php \
+  --arch amd64 \
   stretch \
   "$DEBIAN_ROOT" \
   http://deb.debian.org/debian/
@@ -45,22 +48,26 @@ echo "root::0:0:root:/root:/bin/bash" >> $DEBIAN_ROOT/etc/passwd
 mv $DEBIAN_ROOT/boot/vmlinuz* $DEBIAN_ROOT/boot/vmlinuz
 mv $DEBIAN_ROOT/boot/initrd.img* $DEBIAN_ROOT/boot/initrd.img
 
+# Copy Basilisk, System image and ROM
 mkdir $DEBIAN_ROOT/opt/bigbang
 mv $BUILD_DIR/macemu/BasiliskII/src/Unix/BasiliskII $DEBIAN_ROOT/opt/bigbang/
 mv $BUILD_DIR/system7.hda $DEBIAN_ROOT/opt/bigbang/
-mv $BUILD_DIR/Mac\ OS\ ROM $DEBIAN_ROOT/opt/bigbang/
+mv $BUILD_DIR/MacOSROM $DEBIAN_ROOT/opt/bigbang/
 
+# Settings files
 mv $BUILD_DIR/motd $DEBIAN_ROOT/etc/motd
 mv $BUILD_DIR/interfaces $DEBIAN_ROOT/etc/network/interfaces
 mv $BUILD_DIR/xinitrc $DEBIAN_ROOT/root/.xinitrc
 mv $BUILD_DIR/basilisk_ii_prefs $DEBIAN_ROOT/root/.basilisk_ii_prefs
 mv $BUILD_DIR/bash_profile $DEBIAN_ROOT/root/.bash_profile
 
+# Aura boot
 mv $BUILD_DIR/aura-boot.service $DEBIAN_ROOT/etc/systemd/system/aura-boot.service
 mv $BUILD_DIR/aura-boot.sh $DEBIAN_ROOT/opt/bigbang/aura-boot.sh
 chmod +x $DEBIAN_ROOT/opt/bigbang/aura-boot.sh
 ln -s $DEBIAN_ROOT/etc/systemd/system/aura-boot.service $DEBIAN_ROOT/etc/systemd/system/multi-user.target.wants/aura-boot.service
 
+# Aura Early Boot
 mv $BUILD_DIR/aura-early-boot.service $DEBIAN_ROOT/etc/systemd/system/aura-early-boot.service
 mv $BUILD_DIR/aura-early-boot.sh $DEBIAN_ROOT/opt/bigbang/aura-early-boot.sh
 mv $BUILD_DIR/welcome.png $DEBIAN_ROOT/opt/bigbang/welcome.png
@@ -68,10 +75,20 @@ chmod +x $DEBIAN_ROOT/opt/bigbang/aura-early-boot.sh
 mkdir $DEBIAN_ROOT/etc/systemd/system/basic.target.wants/
 ln -s $DEBIAN_ROOT/etc/systemd/system/aura-early-boot.service $DEBIAN_ROOT/etc/systemd/system/basic.target.wants/aura-early-boot.service
 
-# Copy EFI boot files
+# Copy EFI boot files (32-bit is for machines like early Macs which use 32-bit EFI but 64-bit CPUs)
 mkdir -p $DEBIAN_ROOT/boot/EFI/BOOT
 cp /usr/lib/SYSLINUX.EFI/efi64/syslinux.efi $DEBIAN_ROOT/boot/EFI/BOOT/BOOTX64.EFI
-cp /usr/lib/SYSLINUX.EFI/efi32/syslinux.efi $DEBIAN_ROOT/boot/EFI/BOOT/BOOTX32.EFI
+cp /usr/lib/SYSLINUX.EFI/efi32/syslinux.efi $DEBIAN_ROOT/boot/EFI/BOOT/BOOTIA32.EFI
+cp /usr/lib/syslinux/modules/efi64/ldlinux.e64 $DEBIAN_ROOT/boot/EFI/BOOT/ldlinux.e64
+cp /usr/lib/syslinux/modules/efi32/ldlinux.e32 $DEBIAN_ROOT/boot/EFI/BOOT/ldlinux.e32
+# Aura-ui
+mkdir mkdir -p $DEBIAN_ROOT/opt/bigbang/admin
+cp -r $BUILD_DIR/aura-ui/* $DEBIAN_ROOT/opt/bigbang/admin
+mv $BUILD_DIR/aura-ui.service $DEBIAN_ROOT/etc/systemd/system/aura-ui.service
+ln -s $DEBIAN_ROOT/etc/systemd/system/aura-ui.service $DEBIAN_ROOT/etc/systemd/system/multi-user.target.wants/aura-ui.service
+
+# Remove APT cache
+rm -rf $DEBIAN_ROOT/var/cache/apt/archives/*.deb
 
 # Add a build log
 echo "Aura built on: " >> $DEBIAN_ROOT/aura-build-info

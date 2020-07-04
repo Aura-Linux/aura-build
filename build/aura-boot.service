@@ -1,6 +1,5 @@
 [Unit]
 Description=Starts Aura (including first boot scripts)
-User=root
 
 [Service]
 Type=forking

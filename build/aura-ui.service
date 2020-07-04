@@ -1,0 +1,10 @@
+[Unit]
+Description=Starts Aura Web UI
+
+[Service]
+Type=simple
+WorkingDirectory=/opt/bigbang/admin
+ExecStart=/usr/bin/php -S 127.0.0.1:8000
+
+[Install]
+WantedBy=multi-user.target

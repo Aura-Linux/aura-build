@@ -1,4 +1,4 @@
-FROM i386/debian:stretch
+FROM debian:stretch
 WORKDIR /opt/bigbang/build
 
 RUN apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install  -y \
@@ -10,10 +10,11 @@ RUN apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install  -y \
   libguestfs-tools \
   syslinux \
   syslinux-efi \
+  syslinux-common \
   util-linux \
   gdisk \
   e2fsprogs \
-  linux-image-686-pae
+  linux-image-amd64
 
 COPY build/ .
 
