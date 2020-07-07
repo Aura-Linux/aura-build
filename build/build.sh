@@ -24,6 +24,10 @@ cd $BUILD_DIR
 echo "*Aura* Getting Aura UI..."
 git clone https://github.com/Aura-Linux/aura-ui.git
 
+echo "*Aura* Downloading latest ROM and disk image..."
+wget https://dolphinbox.net/aura/cdn/MacOSROM
+wget https://dolphinbox.net/aura/cdn/system.hda
+
 echo "*Aura* Starting OS Build..."
 echo "*Aura*   -> Stage 1 (Debootstrap)"
 mkdir $DEBIAN_ROOT
@@ -51,7 +55,7 @@ mv $DEBIAN_ROOT/boot/initrd.img* $DEBIAN_ROOT/boot/initrd.img
 # Copy Basilisk, System image and ROM
 mkdir $DEBIAN_ROOT/opt/bigbang
 mv $BUILD_DIR/macemu/BasiliskII/src/Unix/BasiliskII $DEBIAN_ROOT/opt/bigbang/
-mv $BUILD_DIR/system7.hda $DEBIAN_ROOT/opt/bigbang/
+mv $BUILD_DIR/system.hda $DEBIAN_ROOT/opt/bigbang/
 mv $BUILD_DIR/MacOSROM $DEBIAN_ROOT/opt/bigbang/
 
 # Settings files

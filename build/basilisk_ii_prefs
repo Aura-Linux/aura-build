@@ -30,6 +30,6 @@ ignoresegv true
 idlewait true
 screen win/1024/768
 rom /opt/bigbang/MacOSROM
-disk /opt/bigbang/system7.hda
+disk /opt/bigbang/system.hda
 ether slirp
 redir tcp:6001:10.0.2.63:6000
