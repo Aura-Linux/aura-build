@@ -1,5 +1,7 @@
 # aura-build
-![Aura Logo](https://dolphinbox.net/aura/aura-centre-white.png)
+<p align="center">
+  <img width="100%" src="https://dolphinbox.net/aura/aura-centre-white.png">
+</p>
 
 ![Aura Screenshot](https://dolphinbox.net/aura/screenshots/screenshot-2.png)
 
