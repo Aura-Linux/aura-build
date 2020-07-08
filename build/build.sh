@@ -32,7 +32,7 @@ echo "*Aura* Starting OS Build..."
 echo "*Aura*   -> Stage 1 (Debootstrap)"
 mkdir $DEBIAN_ROOT
 debootstrap \
-  --include linux-image-rt-amd64,xorg,sudo,libsdl2-2.0-0,cloud-utils,telnetd,fim,php \
+  --include linux-image-rt-amd64,xorg,sudo,libsdl2-2.0-0,cloud-utils,telnetd,fim,php,openssh-server \
   --arch amd64 \
   stretch \
   "$DEBIAN_ROOT" \
@@ -79,12 +79,19 @@ chmod +x $DEBIAN_ROOT/opt/bigbang/aura-early-boot.sh
 mkdir $DEBIAN_ROOT/etc/systemd/system/basic.target.wants/
 ln -s $DEBIAN_ROOT/etc/systemd/system/aura-early-boot.service $DEBIAN_ROOT/etc/systemd/system/basic.target.wants/aura-early-boot.service
 
+# OpenSSH
+echo "PermitRootLogin yes" >> $DEBIAN_ROOT/etc/ssh/sshd_config
+# todo make this less insecure
+echo "PermitEmptyPasswords yes" >> $DEBIAN_ROOT/etc/ssh/sshd_config
+echo "ssh" >> $DEBIAN_ROOT/etc/securetty
+
 # Copy EFI boot files (32-bit is for machines like early Macs which use 32-bit EFI but 64-bit CPUs)
 mkdir -p $DEBIAN_ROOT/boot/EFI/BOOT
 cp /usr/lib/SYSLINUX.EFI/efi64/syslinux.efi $DEBIAN_ROOT/boot/EFI/BOOT/BOOTX64.EFI
 cp /usr/lib/SYSLINUX.EFI/efi32/syslinux.efi $DEBIAN_ROOT/boot/EFI/BOOT/BOOTIA32.EFI
 cp /usr/lib/syslinux/modules/efi64/ldlinux.e64 $DEBIAN_ROOT/boot/EFI/BOOT/ldlinux.e64
 cp /usr/lib/syslinux/modules/efi32/ldlinux.e32 $DEBIAN_ROOT/boot/EFI/BOOT/ldlinux.e32
+
 # Aura-ui
 mkdir mkdir -p $DEBIAN_ROOT/opt/bigbang/admin
 cp -r $BUILD_DIR/aura-ui/* $DEBIAN_ROOT/opt/bigbang/admin
@@ -93,6 +100,7 @@ ln -s $DEBIAN_ROOT/etc/systemd/system/aura-ui.service $DEBIAN_ROOT/etc/systemd/s
 
 # Remove APT cache
 rm -rf $DEBIAN_ROOT/var/cache/apt/archives/*.deb
+
 
 # Add a build log
 echo "Aura built on: " >> $DEBIAN_ROOT/aura-build-info
